@@ -17,7 +17,7 @@ def death():
         f.close()
 
 def default_print():
-    print(f"{Fore.GREEN}Modules imported succesfully! {Style.RESET_ALL}ZoomSlob {Fore.LIGHTYELLOW_EX}Version 1.1{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}Modules imported succesfully! {Style.RESET_ALL}ZoomSlob {Fore.LIGHTYELLOW_EX}Version {version}{Style.RESET_ALL}")
     title = Fore.LIGHTBLUE_EX + r'''
  ________  ________  ________  _____ ______   ________  ___       ________  ________
 |\_____  \|\   __  \|\   __  \|\   _ \  _   \|\   ____\|\  \     |\   __  \|\   __  \
@@ -38,12 +38,16 @@ def update_checker():
     try:
         print("Checking for updates...")
         stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/version.txt")
-        streamBytes = stream.read()
-        streamText = streamBytes.decode('utf8')
+        streamBytes = stream.readlines()
+        streamText = streamBytes[0].decode('utf8')
+        streamText = str(streamText).split(' ')
+        streamVer = streamText[0]
+        streamReq = streamText[1]
         stream.close()
         os.system('cls')
-        if float(streamText) > version:
-            print(f"The newer version of ZoomSlob ({Fore.YELLOW}{streamText}{Style.RESET_ALL}) is available")
+        print(f"Version: {streamVer} Required: {streamReq}")
+        if float(streamVer) > version:
+            print(f"The newer version of ZoomSlob ({Fore.YELLOW}{streamVer}{Style.RESET_ALL}) is available")
             upChoice = ""
             while upChoice == "":
                 tempChoice = input(f'Would you like to update now? ({Fore.GREEN}y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ').lower()
@@ -76,7 +80,7 @@ def update_checker():
                     except:
                         os.chmod(app_path, 775)
                     os.system('cls')
-                    print(f"{Fore.GREEN}Updated ZoomSlob to version {streamText}{Style.RESET_ALL}")
+                    print(f"{Fore.GREEN}Updated ZoomSlob to version {streamVer}{Style.RESET_ALL}")
                     input('Press enter to reload')
                     if os.path.isfile("zoomdaddy.py"):
                         os.system('cls')
