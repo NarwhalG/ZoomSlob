@@ -29,7 +29,6 @@ def default_print():
                                                 \|_________|
     ''' + Style.RESET_ALL
     print(title)
-    print(os.path.realpath(sys.argv[0]))
     trash = "csv\\"
     print(f"Reading: {Fore.CYAN}{csvList[choiceNum - 1].replace(trash, '')}{Style.RESET_ALL}")
     if len(csv.index) > 0:
@@ -59,7 +58,7 @@ def update_checker():
                 try:
                     dl_file = open(dl_path, 'w')
                     dl_stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/zoomdaddy.py")
-                    dl_file.write(dl_stream.read())
+                    dl_file.write(dl_stream.read().decode('utf-8'))
                     dl_stream.close()
                     dl_file.close()
                 except IOError as errno:
