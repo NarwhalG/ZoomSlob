@@ -2,6 +2,10 @@ import os
 import time
 import re
 import subprocess
+import logging
+import traceback
+import sys
+import urllib.request
 from urllib.parse import urlparse
 
 def death():
@@ -27,6 +31,76 @@ except ModuleNotFoundError as err:
         print("Some modules are missing, please run module_installer.py and restart the program!")
         input()
     exit()
+
+version = 1.1
+def update_checker():
+    try:
+        print("Checking for updates...")
+        stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/version.txt")
+        streamBytes = stream.readlines()
+        streamText = streamBytes[1].decode('utf8')
+        streamText = str(streamText).split(' ')
+        stream.close()
+        streamVer = streamText[0]
+        streamReq = streamText[1]
+        time.sleep(2)
+        os.system('cls')
+        print(f"Version: {streamVer} Required: {streamReq}")
+        if float(streamVer) > version or streamReq == "1":
+            print(f"The newer version of ScheduleSlob ({Fore.YELLOW}{streamVer}{Style.RESET_ALL}) is available")
+            upChoice = ""
+            if streamReq == "1": # in case i get really sloppy with my commits
+                upChoice == "y"
+            while upChoice == "":
+                tempChoice = input(f'Would you like to update now? ({Fore.GREEN}y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ').lower()
+                if tempChoice == "y":
+                    upChoice = tempChoice
+                elif tempChoice == "n":
+                    upChoice = tempChoice
+            if upChoice == "y":
+                app_path = os.path.realpath(sys.argv[0])
+                dl_path = os.path.realpath(sys.argv[0]) + ".new"
+                backup_path = os.path.realpath(sys.argv[0]) + ".old"
+                try:
+                    dl_file = open(dl_path, 'w')
+                    dl_stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/zoomdaddy.py")
+                    dl_file.write(dl_stream.read().decode('utf-8'))
+                    dl_stream.close()
+                    dl_file.close()
+                except IOError as errno:
+                    print(f"{Fore.LIGHTRED_EX}Download Failed{Style.RESET_ALL}")
+                    print(errno)
+                    input('\nPress enter to continue anyway')
+                    return
+                try:
+                    if os.path.isfile(backup_path):
+                        os.remove(backup_path)
+                    os.rename(app_path, backup_path)
+                    os.rename(dl_path, app_path)
+                    try:
+                        import shutil
+                        shutil.copymode(backup_path, app_path)
+                    except:
+                        os.chmod(app_path, 775)
+                    os.system('cls')
+                    print(f"{Fore.GREEN}Updated Schedule Maker to version {streamVer}{Style.RESET_ALL}")
+                    input('Press enter to reload')
+                    if os.path.isfile("schedule_maker.py"):
+                        os.system('cls')
+                        subprocess.call(['python', 'schedule_maker.py'])
+                    exit()
+                except:
+                    print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
+                    input('\nPress enter to continue anyway')
+        else:
+            print(f"Your version of Schedule Maker ({Fore.LIGHTYELLOW_EX}{version}{Style.RESET_ALL}) is up to date :)")
+            time.sleep(4)
+    except Exception:
+        print(f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}")
+        logging.error(traceback.format_exc())
+        input('\nPress enter to continue anyway')
+        
+update_checker()
 
 layout = {'MeetingTime': [],
         'MeetingID': [],

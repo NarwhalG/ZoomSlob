@@ -31,6 +31,7 @@ def default_print():
     print(title)
     trash = "csv\\"
     print(f"Reading: {Fore.CYAN}{csvList[choiceNum - 1].replace(trash, '')}{Style.RESET_ALL}")
+    time.sleep(2)
     if len(csv.index) > 0:
         print("Found " + str(len(csv.index)) + " class(es), time will be checked regularly in the background.")
 version = 1.3
@@ -41,14 +42,17 @@ def update_checker():
         streamBytes = stream.readlines()
         streamText = streamBytes[0].decode('utf8')
         streamText = str(streamText).split(' ')
+        stream.close()
         streamVer = streamText[0]
         streamReq = streamText[1]
-        stream.close()
+        time.sleep(2)
         os.system('cls')
         print(f"Version: {streamVer} Required: {streamReq}")
-        if float(streamVer) > version:
+        if float(streamVer) > version or streamReq == "1":
             print(f"The newer version of ZoomSlob ({Fore.YELLOW}{streamVer}{Style.RESET_ALL}) is available")
             upChoice = ""
+            if streamReq == "1": # in case i get really sloppy with my commits
+                upChoice == "y"
             while upChoice == "":
                 tempChoice = input(f'Would you like to update now? ({Fore.GREEN}y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ').lower()
                 if tempChoice == "y":
@@ -69,6 +73,7 @@ def update_checker():
                     print(f"{Fore.LIGHTRED_EX}Download Failed{Style.RESET_ALL}")
                     print(errno)
                     input('\nPress enter to continue anyway')
+                    return
                 try:
                     if os.path.isfile(backup_path):
                         os.remove(backup_path)
@@ -88,12 +93,12 @@ def update_checker():
                     exit()
                 except:
                     print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
-                    input()
+                    input('\nPress enter to continue anyway')
         else:
             print(f"Your version of ZoomSlob ({Fore.LIGHTYELLOW_EX}{version}{Style.RESET_ALL}) is up to date :)")
             time.sleep(4)
     except Exception:
-        print(f"{Fore.LIGHTRED_EX}Failed to check for updates.")
+        print(f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}")
         logging.error(traceback.format_exc())
         input('\nPress enter to continue anyway') 
 try:
