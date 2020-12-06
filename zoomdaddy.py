@@ -76,6 +76,13 @@ def update_checker():
                         shutil.copymode(backup_path, app_path)
                     except:
                         os.chmod(app_path, 775)
+                    os.system('cls')
+                    print(f"{Fore.GREEN}Updated ZoomSlob to version {streamText}{Style.RESET_ALL}")
+                    input('Press enter to reload')
+                    if os.path.isfile("zoomdaddy.py"):
+                        os.system('cls')
+                        subprocess.call(['python', 'zoomdaddy.py'])
+                    exit()
                 except:
                     print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
                     input()
