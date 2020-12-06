@@ -33,7 +33,7 @@ def default_print():
     print(f"Reading: {Fore.CYAN}{csvList[choiceNum - 1].replace(trash, '')}{Style.RESET_ALL}")
     if len(csv.index) > 0:
         print("Found " + str(len(csv.index)) + " class(es), time will be checked regularly in the background.")
-version = 1.2
+version = 1.3
 def update_checker():
     try:
         print("Checking for updates...")
