@@ -31,7 +31,7 @@ def default_print():
     print(title)
     trash = "csv\\"
     print(f"Reading: {Fore.CYAN}{csvList[choiceNum - 1].replace(trash, '')}{Style.RESET_ALL}")
-    time.sleep(2)
+    time.sleep(1)
     if len(csv.index) > 0:
         print("Found " + str(len(csv.index)) + " class(es), time will be checked regularly in the background.")
 version = 1.3
@@ -45,9 +45,8 @@ def update_checker():
         stream.close()
         streamVer = streamText[0]
         streamReq = streamText[1]
-        time.sleep(2)
+        time.sleep(1.5)
         os.system('cls')
-        print(f"Version: {streamVer} Required: {streamReq}")
         if float(streamVer) > version or streamReq == "1":
             print(f"The newer version of ZoomSlob ({Fore.YELLOW}{streamVer}{Style.RESET_ALL}) is available")
             upChoice = ""
@@ -96,7 +95,7 @@ def update_checker():
                     input('\nPress enter to continue anyway')
         else:
             print(f"Your version of ZoomSlob ({Fore.LIGHTYELLOW_EX}{version}{Style.RESET_ALL}) is up to date :)")
-            time.sleep(4)
+            time.sleep(3)
     except Exception:
         print(f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}")
         logging.error(traceback.format_exc())
@@ -159,20 +158,23 @@ except ModuleNotFoundError as err:
         input()
     exit()
 
+def time_difference(theTime):
+    curt = time.localtime()
+    curTime = time.strftime('%H:%M:%S', curt)
+
+    delta1 = datetime.strptime(theTime, '%H:%M').time()
+    m1 = datetime.strptime(str(delta1), '%H:%M:%S').time()
+    tdelta = datetime.strptime(curTime, '%H:%M:%S') - datetime.strptime(str(m1), '%H:%M:%S')
+    return tdelta.total_seconds()
+
 curDay = datetime.today().strftime('%A').lower()[:2]
-curt = time.localtime()
-curTime = time.strftime('%H:%M:%S', curt)
 for index, row in csv.iterrows():
     meetingDays = row['MeetingDays']
     splitDays = meetingDays.lower().replace(" ", "").split(',')
     if not curDay in splitDays:
         csv.drop(index, inplace = True)
     else:
-        meetingTime = datetime.strptime(row['MeetingTime'], '%H:%M').time()
-        m1 = datetime.strptime(str(meetingTime), '%H:%M:%S').time()
-        tdelta = datetime.strptime(curTime, '%H:%M:%S') - datetime.strptime(str(m1), '%H:%M:%S')
-        #print(str(curTime) + " - " + str(m1) + "\n" + str(tdelta))
-        if tdelta.total_seconds() >= 300:
+        if time_difference(row['MeetingTime']) > 300:
             #more than 5 minutes late, remove the meeting
             csv.drop(index, inplace = True)
 
@@ -228,6 +230,27 @@ def manual_sign_in(meetid, passwd = ""):
         pyautogui.write(passwd)
         pyautogui.press('enter')
 
+if not csv.empty:
+    for index, row in csv.iterrows():
+        print(index)
+        # -300
+        if time_difference(row['MeetingTime']) <= 300:
+            #less than 5 minutes late, join late meeting
+            m_id = str(row['MeetingID'])
+            m_id.replace(" ", "") #just makes life less complicated
+            m_pswd = str(row['MeetingPassword'])
+            m_pswd.replace(" ", "")
+
+            try:
+                start_zoom()
+                manual_sign_in(m_id, m_pswd)
+                csv.drop(index, inplace = True)
+                os.system('cls')
+                default_print()
+            except Exception as e:
+                print(f"{Fore.RED}Something went wrong with the automation!{Style.RESET_ALL}")
+                logging.error(traceback.format_exc())
+            break # prevent madness
 while True:
     if len(csv.index) == 0:
         break
@@ -244,7 +267,6 @@ while True:
             manual_sign_in(m_id, m_pswd)
             csv.drop(row.index, inplace = True)
             os.system('cls')
-            print("BOOFBOOF")
             default_print()
             if len(csv.index) == 0:
                 break

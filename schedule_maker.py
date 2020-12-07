@@ -45,7 +45,6 @@ def update_checker():
         streamReq = streamText[1]
         time.sleep(2)
         os.system('cls')
-        print(f"Version: {streamVer} Required: {streamReq}")
         if float(streamVer) > version or streamReq == "1":
             print(f"The newer version of ScheduleSlob ({Fore.YELLOW}{streamVer}{Style.RESET_ALL}) is available")
             upChoice = ""
