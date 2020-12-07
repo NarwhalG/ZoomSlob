@@ -158,6 +158,15 @@ except ModuleNotFoundError as err:
         input()
     exit()
 
+if os.path.isfile('hahasecret'):
+    pyautogui.press('enter')
+    time.sleep(1.5)
+    if os.path.isfile("ignore\pin.txt"):
+        f = open('ignore\pin.txt', 'r', encoding='utf-8')
+        pin = f.read()
+        f.close()
+        pyautogui.write(pin)
+
 def time_difference(theTime):
     curt = time.localtime()
     curTime = time.strftime('%H:%M:%S', curt)
