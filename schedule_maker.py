@@ -8,20 +8,12 @@ import sys
 import urllib.request
 from urllib.parse import urlparse
 
-def death():
-    os.system('cls')
-    if os.path.isfile("ignore\skull.txt"):
-        f = open('ignore\skull.txt', 'r', encoding='utf-8')
-        print(f.read())
-        f.close()
 try:
     from colorama import Fore
     from colorama import Style
     import pandas as pd
     os.system('color')
 except ModuleNotFoundError as err:
-    death()
-    time.sleep(2)
     if os.path.isfile("module_installer.py"):
         subprocess.call(['python', 'module_installer.py'])
         if os.path.isfile("schedule_maker.py"):
@@ -36,20 +28,20 @@ version = 1.1
 def update_checker():
     try:
         print("Checking for updates...")
+        time.sleep(2)
         stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/version.txt")
         streamBytes = stream.readlines()
         streamText = streamBytes[1].decode('utf8')
         streamText = str(streamText).split(' ')
         stream.close()
-        streamVer = streamText[0]
+        streamVer = float(streamText[0])
         streamReq = streamText[1]
-        time.sleep(2)
         os.system('cls')
-        if float(streamVer) > version or streamReq == "1":
+        if streamVer > version or streamReq == "1":
             print(f"The newer version of ScheduleSlob ({Fore.YELLOW}{streamVer}{Style.RESET_ALL}) is available")
             upChoice = ""
             if streamReq == "1": # in case i get really sloppy with my commits
-                upChoice == "y"
+                upChoice = "y"
             while upChoice == "":
                 tempChoice = input(f'Would you like to update now? ({Fore.GREEN}y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ').lower()
                 if tempChoice == "y":
@@ -93,7 +85,7 @@ def update_checker():
                     input('\nPress enter to continue anyway')
         else:
             print(f"Your version of Schedule Maker ({Fore.LIGHTYELLOW_EX}{version}{Style.RESET_ALL}) is up to date :)")
-            time.sleep(4)
+            time.sleep(3)
     except Exception:
         print(f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}")
         logging.error(traceback.format_exc())

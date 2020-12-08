@@ -41,7 +41,8 @@ def update_checker():
             upChoice = ""
             if streamReq == "1" and streamVer > version: # in case i get really sloppy with my commits
                 print("Downloading required update...")
-                upChoice == "y"
+                time.sleep(2)
+                upChoice = "y"
             while upChoice == "":
                 tempChoice = input(f'Would you like to update now? ({Fore.GREEN}y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ').lower()
                 if tempChoice == "y":
@@ -219,15 +220,17 @@ def process_exists(process):
     output = subprocess.check_output(call).decode()
     last = output.strip().split('\r\n')[-1]
     return last.lower().startswith(process.lower())
-def start_zoom():
+def start_zoom(notif = True):
     if process_exists('Zoom.exe'):
         try:
             os.system("taskkill /f /im Zoom.exe")
+            time.sleep(2)
         except Exception:
             pass
     try:
         subprocess.Popen(zoom_path)
-        print("Launching Zoom")
+        if notif:
+            print("Launching Zoom")
     except Exception as e:
         os.system('cls')
         print(f"{Fore.RED}There was a problem finding the directory for Zoom.exe!{Style.RESET_ALL}")
@@ -240,14 +243,23 @@ def manual_sign_in(meetid, passwd = ""):
     time.sleep(10)
 
     join_btn = pyautogui.locateCenterOnScreen('ignore\join_button.png')
-    pyautogui.moveTo(join_btn)
-    pyautogui.click()
+    if join_btn != None:
+        pyautogui.moveTo(join_btn)
+        pyautogui.click()
+    else:
+        print(f"Zoom not on foreground. {Fore.LIGHTRED_EX}Retrying...{Style.RESET_ALL}")
+        start_zoom(False)
+        time.sleep(4)
+        join_btn = pyautogui.locateCenterOnScreen('ignore\join_button.png')
+        if join_btn != None:
+            pyautogui.moveTo(join_btn)
+            pyautogui.click()
+        else:
+            print(f"{Fore.RED}Failed to keep Zoom on the foreground.{Style.RESET_ALL}\n")
+            input('Press enter to exit')
+            exit()
 
-    #time.sleep(1)
-    #id_btn = pyau6921371120zomb6togui.locateCenterOnScreen('ignore\meetingID_input.png')
-    #pyautogui.moveTo(id_btn)
-    #pyautogui.click()
-    time.sleep(1)
+    time.sleep(3)
     pyautogui.write(meetid)
 
     time.sleep(1)
