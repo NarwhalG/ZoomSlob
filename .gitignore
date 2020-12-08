@@ -3,3 +3,4 @@ csv/
 ignore/
 readme.txt
 hahasecret
+*.json
