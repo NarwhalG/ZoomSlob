@@ -42,14 +42,14 @@ def update_checker():
             if streamReq == "1" and streamVer > version: # in case i get really sloppy with my commits
                 print("Downloading required update...")
                 time.sleep(2)
-                upChoice = "y"
+                upChoice = "Y"
             while upChoice == "":
-                tempChoice = input(f'Would you like to update now? ({Fore.GREEN}y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ').lower()
-                if tempChoice == "y":
+                tempChoice = input(f'Would you like to update now? ({Fore.GREEN}Y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ')
+                if tempChoice == "Y":
                     upChoice = tempChoice
                 elif tempChoice == "n":
                     upChoice = tempChoice
-            if upChoice == "y":
+            if upChoice == "Y":
                 app_path = os.path.realpath(sys.argv[0])
                 dl_path = os.path.realpath(sys.argv[0]) + ".new"
                 backup_path = os.path.realpath(sys.argv[0]) + ".old"
@@ -210,7 +210,8 @@ for index, row in csv.iterrows():
     if not curDay in splitDays:
         csv.drop(index, inplace = True)
     else:
-        if time_difference(row['MeetingTime']) > 300:
+        timeDif = time_difference(row['MeetingTime'])
+        if timeDif > 300:
             #more than 5 minutes late, remove the meeting
             csv.drop(index, inplace = True)
 
@@ -280,7 +281,9 @@ def manual_sign_in(meetid, passwd = ""):
 if not csv.empty:
     for index, row in csv.iterrows():
         # if less than 5 minutes late: join
-        if time_difference(row['MeetingTime']) <= 300:
+        timeDif = time_difference(row['MeetingTime'])
+        if timeDif <= 300 and timeDif >= 0:
+            print(str(row['MeetingTime']) + " " + str(timeDif))
             m_id = str(row['MeetingID'])
             m_id.replace(" ", "") #just makes life less complicated
             m_pswd = str(row['MeetingPassword'])
