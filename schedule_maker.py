@@ -22,7 +22,7 @@ except ModuleNotFoundError as err:
         input()
     exit()
 
-version = 1.2
+version = 1.21
 def update_checker():
     try:
         print("Checking for updates...")
@@ -46,6 +46,7 @@ def update_checker():
                     upChoice = tempChoice
                 elif tempChoice == "n":
                     upChoice = tempChoice
+                    os.system(f'title Schedule Maker {version} (Outdated Version)')
             if upChoice == "y":
                 app_path = os.path.realpath(sys.argv[0])
                 dl_path = os.path.realpath(sys.argv[0]) + ".new"
@@ -83,7 +84,8 @@ def update_checker():
                     input('\nPress enter to continue anyway')
         else:
             print(f"Your version of Schedule Maker ({Fore.LIGHTYELLOW_EX}{version}{Style.RESET_ALL}) is up to date :)")
-            time.sleep(3)
+            time.sleep(2.5)
+            os.system(f'title Schedule Maker {version}(Latest Version)')
     except Exception:
         print(f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}")
         logging.error(traceback.format_exc())
@@ -202,7 +204,7 @@ while not completed:
         if editChoice == "" and editIndex == None:
             print(f"{Fore.LIGHTBLUE_EX}{url}{Style.RESET_ALL}")
         else:
-            editRow = df.iloc[[editIndex]]
+            editRow = df.loc[[editIndex]]
             meetID = editRow.iloc[0,1]
             password = editRow.iloc[0,2]
             print(f"{Fore.YELLOW}{str(editRow)}{Style.RESET_ALL}\n")
@@ -212,6 +214,8 @@ while not completed:
             valTemp = input(f'Is this correct? ({Fore.GREEN}y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ').lower()
             if valTemp in acceptable:
                 urlVal = valTemp
+            else:
+                continue
         if urlVal == "n" or editChoice == "2":
             newChange = ""
             options = ["1", "2"]
@@ -384,14 +388,14 @@ while not completed:
                             break
                         try:
                             indexNum = int(choice)
-                            editRow = df.iloc[[indexNum]]
+                            editRow = df.loc[[indexNum]]
                             editIndex = indexNum
+                            os.system('cls')
+                            title = f"{Fore.LIGHTYELLOW_EX}{str(editRow)}{Style.RESET_ALL}\n\nWhat would you like to edit?"
+                            editChoice = make_choice(["1", "2", "3"], ["Meeting Time\n", "Credentials\n", "Meeting Days"], True, title, False)
                             break
                         except:
                             pass
-                    os.system('cls')
-                    title = f"{Fore.LIGHTYELLOW_EX}{str(editRow)}{Style.RESET_ALL}\n\nWhat would you like to edit?"
-                    editChoice = make_choice(["1", "2", "3"], ["Meeting Time\n", "Credentials\n", "Meeting Days"], True, title, False)
                     skippedThrough = False
                     loadThrough = False
                     completed = False
