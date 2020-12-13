@@ -53,7 +53,7 @@ def update_checker():
                 backup_path = os.path.realpath(sys.argv[0]) + ".old"
                 try:
                     dl_file = open(dl_path, 'w')
-                    dl_stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/zoomdaddy.py")
+                    dl_stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/schedule_maker.py")
                     dl_file.write(dl_stream.read().decode('utf-8'))
                     dl_stream.close()
                     dl_file.close()
