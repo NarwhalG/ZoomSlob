@@ -34,7 +34,8 @@ class Updates:
         self.version = version
         self.msg = ""
         self.title = None
-    def update_checker(self, title:str=None, index:int=0, tPath:str):
+        self.path = path
+    def update_checker(self, title:str=None, index:int=0):
         print("Checking for updates...")
         time.sleep(1.5)
         try:
@@ -50,9 +51,9 @@ class Updates:
         streamVer = float(streamText[0])
         os.system('cls')
         if self.version < streamVer:
-            app_path = tPath
-            dl_path = tPath + ".new"
-            backup_path = tPath + ".old"
+            app_path = self.path
+            dl_path = self.path + ".new"
+            backup_path = self.path + ".old"
             try:
                 dl_file = open(dl_path, 'w')
                 dl_stream = urllib.request.urlopen(f"https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/{streamName}.py")
@@ -81,7 +82,7 @@ class Updates:
                 input('\nPress enter to continue anyway')
         else:
             self.title = f"{title} is up to date :)"
-updt = Updates(1.52)
+updt = Updates(1.52, os.path.realpath(sys.argv[0]))
 
 class Modules():
     def __init__(self):

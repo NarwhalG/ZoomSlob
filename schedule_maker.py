@@ -14,7 +14,7 @@ try:
 except ImportError:
     pass
 else:
-    updt = Updates(1.23)
+    updt = Updates(1.23, os.path.realpath(sys.argv[0]))
     modules = Modules()
 try:
     from colorama import Fore
@@ -35,7 +35,7 @@ else:
     os.system('color')
 if not os.path.isfile('hahasecret'):
     if updt:
-        updt.update_checker("ScheduleSlob", 1, os.path.realpath(sys.argv[0]))
+        updt.update_checker("ScheduleSlob", 1)
         tmp = "ScheduleSlob (Update Error)"
         os.system(f"title {updt.title or tmp}")
 
