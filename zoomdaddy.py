@@ -81,7 +81,7 @@ class Updates:
                 input('\nPress enter to continue anyway')
         else:
             self.title = f"{title} is up to date :)"
-updt = Updates(1.51)
+updt = Updates(1.52)
 
 class Modules():
     def __init__(self):

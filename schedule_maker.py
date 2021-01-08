@@ -14,7 +14,7 @@ try:
 except ImportError:
     pass
 else:
-    updt = Updates(1.22)
+    updt = Updates(1.23)
     modules = Modules()
 try:
     from colorama import Fore
