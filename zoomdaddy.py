@@ -30,11 +30,11 @@ def default_print():
     if len(csv.index) > 0:
         print("Found " + str(len(csv.index)) + " class(es), time will be checked regularly in the background.")
 class Updates:
-    def __init__(self, version:float):
+    def __init__(self, version:float, path):
         self.version = version
         self.msg = ""
         self.title = None
-    def update_checker(self, title:str=None, index:int=0):
+    def update_checker(self, title:str=None, index:int=0, tPath:str):
         print("Checking for updates...")
         time.sleep(1.5)
         try:
@@ -50,9 +50,9 @@ class Updates:
         streamVer = float(streamText[0])
         os.system('cls')
         if self.version < streamVer:
-            app_path = os.path.realpath(sys.argv[0])
-            dl_path = os.path.realpath(sys.argv[0]) + ".new"
-            backup_path = os.path.realpath(sys.argv[0]) + ".old"
+            app_path = tPath
+            dl_path = tPath + ".new"
+            backup_path = tPath + ".old"
             try:
                 dl_file = open(dl_path, 'w')
                 dl_stream = urllib.request.urlopen(f"https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/{streamName}.py")
@@ -72,9 +72,9 @@ class Updates:
                 except Exception:
                     os.chmod(app_path, 775)
                 self.msg = f"{Fore.GREEN}Updated {title} to version {streamVer}{Style.RESET_ALL}"
-                if os.path.isfile("zoomdaddy.py"):
+                if os.path.isfile(f"{streamName}.py"):
                     os.system('cls')
-                    subprocess.call(['python', 'zoomdaddy.py'])
+                    subprocess.call(['python', f'{streamName}.py'])
                 exit()
             except Exception:
                 print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
@@ -134,7 +134,7 @@ try:
 except Exception:
     pass
 if not os.path.isfile('hahasecret'):
-    updt.update_checker("ZoomSlob", 0)
+    updt.update_checker("ZoomSlob", 0, os.path.realpath(sys.argv[0]))
     os.system(f"title {updt.title}")
 dir_path = 'ignore'
 zoom_path = ""

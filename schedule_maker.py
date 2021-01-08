@@ -35,7 +35,7 @@ else:
     os.system('color')
 if not os.path.isfile('hahasecret'):
     if updt:
-        updt.update_checker("ScheduleSlob", 1)
+        updt.update_checker("ScheduleSlob", 1, os.path.realpath(sys.argv[0]))
         tmp = "ScheduleSlob (Update Error)"
         os.system(f"title {updt.title or tmp}")
 
