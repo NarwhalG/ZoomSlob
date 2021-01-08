@@ -82,7 +82,7 @@ class Updates:
                 input('\nPress enter to continue anyway')
         else:
             self.title = f"{title} is up to date :)"
-updt = Updates(1.52, os.path.realpath(sys.argv[0]))
+updt = Updates(1.6, os.path.realpath(sys.argv[0]))
 
 class Modules():
     def __init__(self):
