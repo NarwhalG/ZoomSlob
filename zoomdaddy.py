@@ -9,6 +9,8 @@ from datetime import date, datetime
 
 def default_print():
     if updt.msg != "":
+        tmp = f"ZoomSlob (Update Error)"
+        os.system(f"title {updt.title or tmp}")
         print(updt.msg + "\n")
     print(f"{Fore.GREEN}Modules imported succesfully! {Style.RESET_ALL}ZoomSlob {Fore.LIGHTYELLOW_EX}Version {updt.version}{Style.RESET_ALL}")
     title = Fore.LIGHTBLUE_EX + r'''
@@ -28,9 +30,10 @@ def default_print():
     if len(csv.index) > 0:
         print("Found " + str(len(csv.index)) + " class(es), time will be checked regularly in the background.")
 class Updates:
-    def __init__(self):
-        self.version = 1.5
+    def __init__(self, version:float):
+        self.version = version
         self.msg = ""
+        self.title = None
     def update_checker(self, title:str=None, index:int=0):
         print("Checking for updates...")
         time.sleep(1.5)
@@ -77,8 +80,8 @@ class Updates:
                 print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
                 input('\nPress enter to continue anyway')
         else:
-            self.msg = f"Your version of {title} ({Fore.LIGHTYELLOW_EX}{self.version}{Style.RESET_ALL}) is up to date :)"
-updt = Updates()
+            self.title = f"{title} is up to date :)"
+updt = Updates(1.51)
 
 class Modules():
     def __init__(self):
@@ -131,8 +134,8 @@ try:
 except Exception:
     pass
 if not os.path.isfile('hahasecret'):
-    updt.update_checker()
-
+    updt.update_checker("ZoomSlob", 0)
+    os.system(f"title {updt.title}")
 dir_path = 'ignore'
 zoom_path = ""
 if os.path.exists(dir_path) and os.path.isdir(dir_path):

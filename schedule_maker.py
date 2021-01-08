@@ -6,94 +6,38 @@ import logging, traceback
 import urllib.request
 from urllib.parse import urlparse
 
+updt = None
+modules = None
+try:
+    from zoomdaddy import Updates
+    from zoomdaddy import Modules
+except ImportError:
+    pass
+else:
+    updt = Updates(1.22)
+    modules = Modules()
 try:
     from colorama import Fore
     from colorama import Style
     import pandas as pd
 except ImportError as err:
-    if os.path.isfile("module_installer.py"):
-        subprocess.call(['python', 'module_installer.py'])
+    if modules:
+        os.system('cls')
+        modules.initiate()
         if os.path.isfile("schedule_maker.py"):
             os.system('cls')
             subprocess.call(['python', 'schedule_maker.py'])
     else:
-        print("Some modules are missing, please run module_installer.py and restart the program!")
+        print("Some modules are missing, please run zoomdaddy.py and restart the program!")
         input()
     exit()
 else:
     os.system('color')
-try:
-    from ZoomSlob.zoomdaddy import Updates
-except ImportError:
-    pass
-version = 1.21
-def update_checker():
-    try:
-        print("Checking for updates...")
-        time.sleep(1)
-        stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/version.txt")
-        streamBytes = stream.readlines()
-        streamText = streamBytes[1].decode('utf8')
-        streamText = str(streamText).split(' ')
-        stream.close()
-        streamVer = float(streamText[0])
-        streamReq = streamText[1]
-        os.system('cls')
-        if streamVer > version or streamReq == "1":
-            print(f"The newer version of ScheduleSlob ({Fore.YELLOW}{streamVer}{Style.RESET_ALL}) is available")
-            upChoice = ""
-            if streamReq == "1": # in case i get really sloppy with my commits
-                upChoice = "y"
-            while upChoice == "":
-                tempChoice = input(f'Would you like to update now? ({Fore.GREEN}y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ').lower()
-                if tempChoice == "y":
-                    upChoice = tempChoice
-                elif tempChoice == "n":
-                    upChoice = tempChoice
-                    os.system(f'title Schedule Maker {version} (Outdated Version)')
-            if upChoice == "y":
-                app_path = os.path.realpath(sys.argv[0])
-                dl_path = os.path.realpath(sys.argv[0]) + ".new"
-                backup_path = os.path.realpath(sys.argv[0]) + ".old"
-                try:
-                    dl_file = open(dl_path, 'w')
-                    dl_stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/schedule_maker.py")
-                    dl_file.write(dl_stream.read().decode('utf-8'))
-                    dl_stream.close()
-                    dl_file.close()
-                except IOError as errno:
-                    print(f"{Fore.LIGHTRED_EX}Download Failed{Style.RESET_ALL}")
-                    print(errno)
-                    input('\nPress enter to continue anyway')
-                    return
-                try:
-                    if os.path.isfile(backup_path):
-                        os.remove(backup_path)
-                    os.rename(app_path, backup_path)
-                    os.rename(dl_path, app_path)
-                    try:
-                        import shutil
-                        shutil.copymode(backup_path, app_path)
-                    except:
-                        os.chmod(app_path, 775)
-                    os.system('cls')
-                    print(f"{Fore.GREEN}Updated Schedule Maker to version {streamVer}{Style.RESET_ALL}")
-                    input('Press enter to reload')
-                    if os.path.isfile("schedule_maker.py"):
-                        os.system('cls')
-                        subprocess.call(['python', 'schedule_maker.py'])
-                    exit()
-                except:
-                    print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
-                    input('\nPress enter to continue anyway')
-        else:
-            print(f"Your version of Schedule Maker ({Fore.LIGHTYELLOW_EX}{version}{Style.RESET_ALL}) is up to date :)")
-            time.sleep(2.5)
-            os.system(f'title Schedule Maker {version}(Latest Version)')
-    except Exception:
-        print(f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}")
-        logging.error(traceback.format_exc())
-        input('\nPress enter to continue anyway')
+if not os.path.isfile('hahasecret'):
+    if updt:
+        updt.update_checker("ScheduleSlob", 1)
+        tmp = "ScheduleSlob (Update Error)"
+        os.system(f"title {updt.title or tmp}")
 
 #pd.options.display.float_format = '{:.2f}'.format
 def time_val(input = ""):
@@ -102,8 +46,6 @@ def time_val(input = ""):
         return True
     except:
         return False
-if not os.path.isfile('hahasecret'):
-    update_checker()
 
 layout = {'MeetingTime': [],
         'MeetingID': [],
