@@ -1,2 +1,2 @@
-1.51 1 zoomdaddy
-1.22 1 schedule_maker
+1.51 1 zoomdaddy .
+1.22 1 schedule_maker .
