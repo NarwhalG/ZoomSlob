@@ -10,8 +10,7 @@ try:
     from colorama import Fore
     from colorama import Style
     import pandas as pd
-    os.system('color')
-except ModuleNotFoundError as err:
+except ImportError as err:
     if os.path.isfile("module_installer.py"):
         subprocess.call(['python', 'module_installer.py'])
         if os.path.isfile("schedule_maker.py"):
@@ -21,7 +20,12 @@ except ModuleNotFoundError as err:
         print("Some modules are missing, please run module_installer.py and restart the program!")
         input()
     exit()
-
+else:
+    os.system('color')
+try:
+    from ZoomSlob.zoomdaddy import Updates
+except ImportError:
+    pass
 version = 1.21
 def update_checker():
     try:

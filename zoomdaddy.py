@@ -3,10 +3,14 @@ import os, sys, subprocess
 import logging, traceback
 import glob
 import urllib, urllib.request
+import shutil
+import filecmp
 from datetime import date, datetime
 
 def default_print():
-    print(f"{Fore.GREEN}Modules imported succesfully! {Style.RESET_ALL}ZoomSlob {Fore.LIGHTYELLOW_EX}Version {version}{Style.RESET_ALL}")
+    if updt.msg != "":
+        print(updt.msg + "\n")
+    print(f"{Fore.GREEN}Modules imported succesfully! {Style.RESET_ALL}ZoomSlob {Fore.LIGHTYELLOW_EX}Version {updt.version}{Style.RESET_ALL}")
     title = Fore.LIGHTBLUE_EX + r'''
  ________  ________  ________  _____ ______   ________  ___       ________  ________
 |\_____  \|\   __  \|\   __  \|\   _ \  _   \|\   ____\|\  \     |\   __  \|\   __  \
@@ -23,74 +27,81 @@ def default_print():
     time.sleep(1)
     if len(csv.index) > 0:
         print("Found " + str(len(csv.index)) + " class(es), time will be checked regularly in the background.")
-version = 1.4
-def update_checker():
-    try:
+class Updates:
+    def __init__(self):
+        self.version = 1.5
+        self.msg = ""
+    def update_checker(self, title:str=None, index:int=0):
         print("Checking for updates...")
         time.sleep(1.5)
-        stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/version.txt")
+        try:
+            stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/version.txt")
+        except Exception:
+            self.msg = f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}"
+            return
         streamBytes = stream.readlines()
-        streamText = streamBytes[0].decode('utf8')
+        streamText = streamBytes[index].decode('utf8')
         streamText = str(streamText).split(' ')
         stream.close()
+        streamName = str(streamText[2])
         streamVer = float(streamText[0])
-        streamReq = streamText[1]
         os.system('cls')
-        if streamVer > version or streamReq == "1":
-            print(f"The newer version of ZoomSlob ({Fore.YELLOW}{streamVer}{Style.RESET_ALL}) is available")
-            upChoice = ""
-            if streamReq == "1" and streamVer > version: # in case i get really sloppy with my commits
-                print("Downloading required update...")
-                time.sleep(2)
-                upChoice = "Y"
-            while upChoice == "":
-                tempChoice = input(f'Would you like to update now? ({Fore.GREEN}Y{Style.RESET_ALL}/{Fore.RED}n{Style.RESET_ALL}) ')
-                if tempChoice == "Y":
-                    upChoice = tempChoice
-                elif tempChoice == "n":
-                    upChoice = tempChoice
-            if upChoice == "Y":
-                app_path = os.path.realpath(sys.argv[0])
-                dl_path = os.path.realpath(sys.argv[0]) + ".new"
-                backup_path = os.path.realpath(sys.argv[0]) + ".old"
+        if self.version < streamVer:
+            app_path = os.path.realpath(sys.argv[0])
+            dl_path = os.path.realpath(sys.argv[0]) + ".new"
+            backup_path = os.path.realpath(sys.argv[0]) + ".old"
+            try:
+                dl_file = open(dl_path, 'w')
+                dl_stream = urllib.request.urlopen(f"https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/{streamName}.py")
+                dl_file.write(dl_stream.read().decode('utf-8'))
+                dl_stream.close()
+                dl_file.close()
+            except IOError as errno:
+                self.msg = f"{Fore.LIGHTRED_EX}Update Download Failed{Style.RESET_ALL}"
+                return
+            try:
+                if os.path.isfile(backup_path):
+                    os.remove(backup_path)
+                os.rename(app_path, backup_path)
+                os.rename(dl_path, app_path)
                 try:
-                    dl_file = open(dl_path, 'w')
-                    dl_stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/zoomdaddy.py")
-                    dl_file.write(dl_stream.read().decode('utf-8'))
-                    dl_stream.close()
-                    dl_file.close()
-                except IOError as errno:
-                    print(f"{Fore.LIGHTRED_EX}Download Failed{Style.RESET_ALL}")
-                    print(errno)
-                    input('\nPress enter to continue anyway')
-                    return
-                try:
-                    if os.path.isfile(backup_path):
-                        os.remove(backup_path)
-                    os.rename(app_path, backup_path)
-                    os.rename(dl_path, app_path)
-                    try:
-                        import shutil
-                        shutil.copymode(backup_path, app_path)
-                    except:
-                        os.chmod(app_path, 775)
+                    shutil.copymode(backup_path, app_path)
+                except Exception:
+                    os.chmod(app_path, 775)
+                self.msg = f"{Fore.GREEN}Updated {title} to version {streamVer}{Style.RESET_ALL}"
+                if os.path.isfile("zoomdaddy.py"):
                     os.system('cls')
-                    print(f"{Fore.GREEN}Updated ZoomSlob to version {streamVer}{Style.RESET_ALL}")
-                    input('Press enter to reload')
-                    if os.path.isfile("zoomdaddy.py"):
-                        os.system('cls')
-                        subprocess.call(['python', 'zoomdaddy.py'])
-                    exit()
-                except:
-                    print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
-                    input('\nPress enter to continue anyway')
+                    subprocess.call(['python', 'zoomdaddy.py'])
+                exit()
+            except Exception:
+                print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
+                input('\nPress enter to continue anyway')
         else:
-            print(f"Your version of ZoomSlob ({Fore.LIGHTYELLOW_EX}{version}{Style.RESET_ALL}) is up to date :)")
-            time.sleep(3)
-    except Exception:
-        print(f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}")
-        logging.error(traceback.format_exc())
-        input('\nPress enter to continue anyway') 
+            self.msg = f"Your version of {title} ({Fore.LIGHTYELLOW_EX}{self.version}{Style.RESET_ALL}) is up to date :)"
+updt = Updates()
+
+class Modules():
+    def __init__(self):
+        self.modules = ["numpy==1.19.3", "pyautogui", "colorama", "pillow", "pandas"]
+
+    def install(self, pckg):
+        print("Please wait while this checks through all of the modules.")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", pckg])
+
+    def initiate(self):
+        try:
+            for pckg in self.modules:
+                self.install(pckg)
+                os.system('cls')
+            print("All modules checked. Press enter to exit.")
+            if os.path.isfile("ignore\doge.txt"):
+                f = open('ignore\doge.txt', 'r', encoding='utf-8')
+                print(f.read())
+                f.close()
+        except Exception as e:
+            logging.error(traceback.format_exc())
+        input()
+modules = Modules()
 # Make sure all modules are installed
 try:
     import pyautogui
@@ -98,24 +109,29 @@ try:
     from colorama import Fore
     from colorama import Style
     import pandas as pd
-
-    pyautogui.FAILSAFE = True
-    os.system('color')
-except ModuleNotFoundError as err:
+except ImportError as err:
     os.system('cls')
     time.sleep(2)
-    if os.path.isfile("module_installer.py"):
-        subprocess.call(['python', 'module_installer.py'])
-        if os.path.isfile("zoomdaddy.py"):
-            os.system('cls')
-            subprocess.call(['python', 'zoomdaddy.py'])
-    else:
-        print("Some modules are missing, please run module_installer.py and restart the program!")
-        input()
+    modules.initiate()
+    if os.path.isfile("zoomdaddy.py"):
+        os.system('cls')
+        subprocess.call(['python', 'zoomdaddy.py'])
     exit()
+else:
+    pyautogui.FAILSAFE = True
+    os.system('color')
 
+try:
+    residue = glob.glob('*.{}'.format('old'))
+    if len(residue) > 0:
+        for r in residue:
+            os.remove(r)
+    if os.path.exists("module_installer.py") and os.path.isfile("module_installer.py"):
+        os.remove("module_installer.py")
+except Exception:
+    pass
 if not os.path.isfile('hahasecret'):
-    update_checker()
+    updt.update_checker()
 
 dir_path = 'ignore'
 zoom_path = ""
@@ -269,7 +285,7 @@ def manual_sign_in(meetid, passwd = ""):
     pyautogui.moveTo(join2_btn)
     pyautogui.click()
 
-    time.sleep(1)
+    time.sleep(2)
     #pass_input = pyautogui.locateCenterOnScreen('ignore\meetingPASS_input.png')
     #pyautogui.moveTo(pass_input)
     #pyautogui.click()
