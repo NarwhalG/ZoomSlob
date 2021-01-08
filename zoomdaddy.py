@@ -135,7 +135,7 @@ try:
 except Exception:
     pass
 if not os.path.isfile('hahasecret'):
-    updt.update_checker("ZoomSlob", 0, os.path.realpath(sys.argv[0]))
+    updt.update_checker("ZoomSlob", 0)
     os.system(f"title {updt.title}")
 dir_path = 'ignore'
 zoom_path = ""
