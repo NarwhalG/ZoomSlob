@@ -32,7 +32,7 @@ try:
 except ImportError:
     pass
 else:
-    updt = Updates(1.3, os.path.realpath(sys.argv[0]))
+    updt = Updates(1.31, os.path.realpath(sys.argv[0]))
     modules = Modules()
 if not os.path.isfile('hahasecret'):
     if updt:
