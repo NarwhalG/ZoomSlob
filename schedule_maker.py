@@ -9,14 +9,6 @@ from urllib.parse import urlparse
 updt = None
 modules = None
 try:
-    from zoomdaddy import Updates
-    from zoomdaddy import Modules
-except ImportError:
-    pass
-else:
-    updt = Updates(1.3, os.path.realpath(sys.argv[0]))
-    modules = Modules()
-try:
     from colorama import Fore
     from colorama import Style
     import pandas as pd
@@ -27,12 +19,21 @@ except ImportError as err:
         if os.path.isfile("schedule_maker.py"):
             os.system('cls')
             subprocess.call(['python', 'schedule_maker.py'])
+        exit()
     else:
         print("Some modules are missing, please run zoomdaddy.py and restart the program!")
         input()
     exit()
 else:
     os.system('color')
+try:
+    from zoomdaddy import Updates
+    from zoomdaddy import Modules
+except ImportError:
+    pass
+else:
+    updt = Updates(1.2, os.path.realpath(sys.argv[0]))
+    modules = Modules()
 if not os.path.isfile('hahasecret'):
     if updt:
         updt.update_checker("ScheduleSlob", 1)
