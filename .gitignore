@@ -1,6 +1,7 @@
 *.csv
 csv/
 ignore/
+__pycache__/
 readme.txt
 hahasecret
 *.json

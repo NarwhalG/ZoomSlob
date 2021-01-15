@@ -111,7 +111,7 @@ def default_print():
         print(f"Next class begins at {row[0]}")
 
 if __name__ == '__main__':
-    updt = Updates(1.6, os.path.realpath(sys.argv[0]))
+    updt = Updates(1.7, os.path.realpath(sys.argv[0]))
     modules = Modules()
     try:
         import pyautogui
