@@ -37,8 +37,6 @@ else:
 if not os.path.isfile('hahasecret'):
     if updt:
         updt.update_checker("ScheduleSlob", 1)
-        tmp = "ScheduleSlob (Update Error)"
-        os.system(f"title {updt.title or tmp}")
 
 #pd.options.display.float_format = '{:.2f}'.format
 def time_val(input = ""):

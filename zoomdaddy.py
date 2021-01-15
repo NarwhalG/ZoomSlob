@@ -4,13 +4,11 @@ import logging, traceback
 import glob
 import urllib, urllib.request
 import shutil
-import filecmp
 from datetime import date, datetime
 
 class Updates:
     def __init__(self, version:float, path):
         self.version = version
-        self.msg = ""
         self.title = None
         self.path = path
     def update_checker(self, title:str=None, index:int=0):
@@ -19,7 +17,8 @@ class Updates:
         try:
             stream = urllib.request.urlopen("https://raw.githubusercontent.com/NarwhalG/ZoomSlob/main/version.txt")
         except Exception:
-            self.msg = f"{Fore.YELLOW}Failed to check for updates.{Style.RESET_ALL}"
+            self.title = f"{title} (No internet access)"
+            os.system(f"title {self.title}")
             return
         streamBytes = stream.readlines()
         streamText = streamBytes[index].decode('utf8')
@@ -39,7 +38,8 @@ class Updates:
                 dl_stream.close()
                 dl_file.close()
             except IOError as errno:
-                self.msg = f"{Fore.LIGHTRED_EX}Update Download Failed{Style.RESET_ALL}"
+                self.title = f"{title} (Update Failed)"
+                os.system(f"title {self.title}")
                 return
             try:
                 if os.path.isfile(backup_path):
@@ -50,16 +50,18 @@ class Updates:
                     shutil.copymode(backup_path, app_path)
                 except Exception:
                     os.chmod(app_path, 775)
-                self.msg = f"{Fore.GREEN}Updated {title} to version {streamVer}{Style.RESET_ALL}"
+                self.title = f"{title} (Update v{streamVer})"
+                os.system(f"title {self.title}")
                 if os.path.isfile(f"{streamName}.py"):
                     os.system('cls')
                     subprocess.call(['python', f'{streamName}.py'])
                 exit()
             except Exception:
-                print(f"{Fore.YELLOW}Something went wrong renaming the files.{Style.RESET_ALL}")
+                print("Something went wrong renaming the files.")
                 input('\nPress enter to continue anyway')
         else:
             self.title = f"{title} is up to date :)"
+            os.system(f"title {self.title}")
 
 class Modules():
     def __init__(self):
